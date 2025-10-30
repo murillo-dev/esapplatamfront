@@ -1,4 +1,5 @@
 import { Component, signal } from '@angular/core';
+// import { MatToolbarModule } from '@angular/material/toolbar';
 import { RouterOutlet } from '@angular/router';
 
 @Component({
@@ -8,5 +9,4 @@ import { RouterOutlet } from '@angular/router';
   styleUrl: './app.scss'
 })
 export class App {
-  protected readonly title = signal('esapplatamfront');
 }
