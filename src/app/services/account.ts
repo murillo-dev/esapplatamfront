@@ -53,7 +53,7 @@ export class AccountService {
   }
 
   transferFunds(fromAccountId: string, toAccountId: string, amount: number): { success: boolean; error?: string } {
-    const accounts = this.store.account();
+    const accounts = this.store.accounts();
     const fromAccount = accounts.find(acc => acc.id === fromAccountId);
     const toAccount = accounts.find(acc => acc.id === toAccountId);
 
@@ -80,9 +80,14 @@ export class AccountService {
       description: `Transferencia a ${toAccount.holderName}`
     };
 
+    this.store.updateAccounts(fromAccountId, -amount);
+    this.store.updateAccounts(toAccountId, amount);
+
     this.store.addTransaction(transaction);
     return { success: true };
   }
+
+
 
   private generateId(): string {
     return Date.now().toString(36) + Math.random().toString(36).substr(2);

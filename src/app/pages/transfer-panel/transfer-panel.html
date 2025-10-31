@@ -1,1 +1,38 @@
-<p>transfer-panel works!</p>
+<mat-card>
+    <mat-card-header>
+        <mat-card-title>
+            Panel de Transferencias
+        </mat-card-title>
+    </mat-card-header>
+    <mat-card-content>
+        <form [formGroup]="transferform" (ngSubmit)="onSubmit()">
+            <mat-form-field appearance="fill" class="full-width">
+                <mat-label>Cuenta Origen</mat-label>
+                <mat-select formControlName="fromAccount" required>
+                    @for(account of accounts(); track account.id) {
+                        <mat-option [value]="account.id">{{ account.holderName }} - {{ account.balance | currency }}</mat-option>
+                    }
+                </mat-select>
+            </mat-form-field>
+
+            <mat-form-field appearance="fill" class="full-width">
+                <mat-label>Cuenta Destino</mat-label>
+                <mat-select formControlName="toAccount" required>
+                    @for(account of accounts(); track account.id) {
+                        <mat-option [value]="account.id">{{ account.holderName }} - {{ account.balance | currency }}</mat-option>
+                    }
+                </mat-select>
+            </mat-form-field>
+
+            <mat-form-field appearance="fill" class="full-width">
+                <mat-label>Monto</mat-label>
+                <input matInput type="number" formControlName="amount" required>
+            </mat-form-field>
+
+            <button mat-raised-button color="primary" type="submit" [disabled]="transferform.invalid">
+                Realizar Transferencia
+            </button>
+
+        </form>
+    </mat-card-content>
+</mat-card>

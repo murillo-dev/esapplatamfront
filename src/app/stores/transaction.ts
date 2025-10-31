@@ -1,14 +1,17 @@
-import { computed, signal } from "@angular/core";
+import { computed, signal, Injectable } from "@angular/core";
 import { Account, Transaction, TransactionFilter } from "../models";
 import { FilterStore } from "./filter";
 
+@Injectable({
+    providedIn: 'root'
+})
 export class TransactionStore {
     private _accounts = signal<Account[]>([]);
     private _transactions = signal<Transaction[]>([]);
 
     public filterStore = new FilterStore();
 
-    public account = this._accounts.asReadonly();
+    public accounts = this._accounts.asReadonly();
     public transaction = this._transactions.asReadonly();
 
     public filteredTransactions = computed(() => {
@@ -63,6 +66,17 @@ export class TransactionStore {
 
     public addTransaction(transaction: Transaction) {
         this._transactions.update(transactions => [...transactions, transaction]);
+    }
+
+    public updateAccounts(id: string, amount: number) {
+        const accounts = this._accounts();
+        const updatedAccounts = accounts.map(acc => {
+            if (acc.id === id) {
+                return { ...acc, balance: acc.balance + amount };
+            }
+            return acc;
+        });
+        this._accounts.set(updatedAccounts);
     }
 
 
