@@ -1,0 +1,45 @@
+.dashboard-container {
+    padding: 1rem;
+}
+
+.metric-card {
+    transition: transform 0.2s ease-in-out, box-shadow 0.2s ease-in-out;
+
+    &:hover {
+        transform: translateY(-2px);
+        box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+    }
+}
+
+.chart-placeholder {
+    background: linear-gradient(135deg, #f8fafc 0%, #e2e8f0 100%);
+
+    .dark & {
+        background: linear-gradient(135deg, #1e293b 0%, #334155 100%);
+    }
+}
+
+// Estilos para la tabla
+.mat-table {
+    background: transparent;
+}
+
+.mat-header-cell {
+    font-weight: 600;
+    color: #374151;
+
+    .dark & {
+        color: #d1d5db;
+    }
+}
+
+// Responsive
+@media (max-width: 768px) {
+    .dashboard-container {
+        padding: 0.5rem;
+    }
+
+    .grid {
+        gap: 1rem;
+    }
+}

@@ -12,7 +12,7 @@ export class TransactionStore {
     public filterStore = new FilterStore();
 
     public accounts = this._accounts.asReadonly();
-    public transaction = this._transactions.asReadonly();
+    public transactions = this._transactions.asReadonly();
 
     public filteredTransactions = computed(() => {
         const transactions = this._transactions();

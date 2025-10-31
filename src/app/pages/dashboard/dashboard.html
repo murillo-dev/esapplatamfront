@@ -1,1 +1,310 @@
-<p>dashboard works!</p>
+<!-- dashboard.component.html -->
+<div class="dashboard-container">
+    <!-- Título y Resumen General -->
+    <div class="mb-6">
+        <h1 class="text-3xl font-bold text-gray-800 dark:text-white mb-2">Dashboard de Transacciones</h1>
+        <p class="text-gray-600 dark:text-gray-300">
+            Resumen en tiempo real de las actividades de transferencia
+        </p>
+    </div>
+
+    <!-- Tarjetas de Métricas Principales -->
+    <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-8">
+        <!-- Total de Transacciones -->
+        <mat-card class="metric-card">
+            <mat-card-content class="flex items-center justify-between p-4">
+                <div>
+                    <div class="text-sm font-medium text-gray-500 dark:text-gray-400 mb-1">
+                        Total Transacciones
+                    </div>
+                    <div class="text-3xl font-bold text-blue-600 dark:text-blue-400">
+                        {{ dashboardData().totalTransactions }}
+                    </div>
+                    <div class="text-xs text-gray-400 dark:text-gray-500 mt-1">
+                        Hoy
+                    </div>
+                </div>
+                <div class="p-3 bg-blue-100 dark:bg-blue-900 rounded-full">
+                    <mat-icon class="text-blue-600 dark:text-blue-400">receipt</mat-icon>
+                </div>
+            </mat-card-content>
+        </mat-card>
+
+        <!-- Total Dinero Transferido -->
+        <mat-card class="metric-card">
+            <mat-card-content class="flex items-center justify-between p-4">
+                <div>
+                    <div class="text-sm font-medium text-gray-500 dark:text-gray-400 mb-1">
+                        Total Transferido
+                    </div>
+                    <div class="text-3xl font-bold text-green-600 dark:text-green-400">
+                        {{ dashboardData().totalAmount | currency:'USD':'symbol':'1.0-0' }}
+                    </div>
+                    <div class="text-xs text-gray-400 dark:text-gray-500 mt-1">
+                        Monto total
+                    </div>
+                </div>
+                <div class="p-3 bg-green-100 dark:bg-green-900 rounded-full">
+                    <mat-icon class="text-green-600 dark:text-green-400">attach_money</mat-icon>
+                </div>
+            </mat-card-content>
+        </mat-card>
+
+        <!-- Promedio por Transacción -->
+        <mat-card class="metric-card">
+            <mat-card-content class="flex items-center justify-between p-4">
+                <div>
+                    <div class="text-sm font-medium text-gray-500 dark:text-gray-400 mb-1">
+                        Promedio por Transacción
+                    </div>
+                    <div class="text-3xl font-bold text-purple-600 dark:text-purple-400">
+                        {{ dashboardData().averageAmount | currency:'USD':'symbol':'1.0-0' }}
+                    </div>
+                    <div class="text-xs text-gray-400 dark:text-gray-500 mt-1">
+                        Monto promedio
+                    </div>
+                </div>
+                <div class="p-3 bg-purple-100 dark:bg-purple-900 rounded-full">
+                    <mat-icon class="text-purple-600 dark:text-purple-400">trending_up</mat-icon>
+                </div>
+            </mat-card-content>
+        </mat-card>
+
+        <!-- Cuenta Más Activa -->
+        <mat-card class="metric-card">
+            <mat-card-content class="flex items-center justify-between p-4">
+                <div>
+                    <div class="text-sm font-medium text-gray-500 dark:text-gray-400 mb-1">
+                        Cuenta Más Activa
+                    </div>
+                    <div class="text-xl font-bold text-orange-600 dark:text-orange-400 truncate"
+                        [matTooltip]="mostActiveAccountInfo()?.holderName || 'N/A'">
+                        {{ mostActiveAccountInfo()?.holderName || 'N/A' }}
+                    </div>
+                    <div class="text-xs text-gray-400 dark:text-gray-500 mt-1">
+                        {{ dashboardData().mostActiveAccount?.count || 0 }} transacciones
+                    </div>
+                </div>
+                <div class="p-3 bg-orange-100 dark:bg-orange-900 rounded-full">
+                    <mat-icon class="text-orange-600 dark:text-orange-400">account_circle</mat-icon>
+                </div>
+            </mat-card-content>
+        </mat-card>
+    </div>
+
+    <!-- Sección de Gráficas y Detalles -->
+    <div class="grid grid-cols-1 lg:grid-cols-3 gap-6 mb-8">
+        <!-- Gráfica de Distribución (Placeholder) -->
+        <mat-card class="lg:col-span-2">
+            <mat-card-header>
+                <mat-card-title class="flex items-center">
+                    <mat-icon class="mr-2 text-blue-500">bar_chart</mat-icon>
+                    Distribución de Transacciones
+                </mat-card-title>
+                <mat-card-subtitle>Resumen por cuentas y montos</mat-card-subtitle>
+            </mat-card-header>
+            <mat-card-content class="p-4">
+                <div
+                    class="chart-placeholder h-64 bg-gray-50 dark:bg-gray-800 rounded-lg flex items-center justify-center">
+                    <div class="text-center text-gray-500 dark:text-gray-400">
+                        <mat-icon class="text-4xl mb-2">insert_chart</mat-icon>
+                        <p>Gráfica de distribución</p>
+                        <p class="text-sm">(Implementar con Chart.js o ngx-charts)</p>
+                    </div>
+                </div>
+
+                <!-- Mini estadísticas debajo de la gráfica -->
+                <div class="grid grid-cols-3 gap-4 mt-4">
+                    <div class="text-center p-3 bg-blue-50 dark:bg-blue-900/20 rounded-lg">
+                        <div class="text-lg font-semibold text-blue-600 dark:text-blue-400">
+                            {{ filteredTransactions().length }}
+                        </div>
+                        <div class="text-xs text-gray-600 dark:text-gray-400">Filtradas</div>
+                    </div>
+                    <div class="text-center p-3 bg-green-50 dark:bg-green-900/20 rounded-lg">
+                        <div class="text-lg font-semibold text-green-600 dark:text-green-400">
+                            {{ (filteredDashboardData().totalAmount / dashboardData().totalAmount * 100) |
+                            number:'1.0-0' }}%
+                        </div>
+                        <div class="text-xs text-gray-600 dark:text-gray-400">Del total</div>
+                    </div>
+                    <div class="text-center p-3 bg-purple-50 dark:bg-purple-900/20 rounded-lg">
+                        <div class="text-lg font-semibold text-purple-600 dark:text-purple-400">
+                            {{ filteredDashboardData().averageAmount | currency:'USD':'symbol':'1.0-0' }}
+                        </div>
+                        <div class="text-xs text-gray-600 dark:text-gray-400">Promedio filtrado</div>
+                    </div>
+                </div>
+            </mat-card-content>
+        </mat-card>
+
+        <!-- Información de Cuenta Más Activa -->
+        <mat-card>
+            <mat-card-header>
+                <mat-card-title class="flex items-center">
+                    <mat-icon class="mr-2 text-orange-500">star</mat-icon>
+                    Cuenta Destacada
+                </mat-card-title>
+                <mat-card-subtitle>Más activa del día</mat-card-subtitle>
+            </mat-card-header>
+            <mat-card-content class="p-4">
+                @if(mostActiveAccountInfo()) {
+                <div class="text-center">
+                    <img [src]="mostActiveAccountInfo()!.holderPhoto" [alt]="mostActiveAccountInfo()!.holderName"
+                        class="w-20 h-20 rounded-full mx-auto mb-4 border-4 border-orange-200 dark:border-orange-800">
+                    <h3 class="font-bold text-lg text-gray-800 dark:text-white mb-1">
+                        {{ mostActiveAccountInfo()!.holderName }}
+                    </h3>
+                    <p class="text-sm text-gray-600 dark:text-gray-400 mb-2">
+                        {{ mostActiveAccountInfo()!.accountNumber }}
+                    </p>
+                    <div class="bg-orange-50 dark:bg-orange-900/20 rounded-lg p-3 mb-3">
+                        <div class="text-2xl font-bold text-orange-600 dark:text-orange-400">
+                            {{ dashboardData().mostActiveAccount?.count || 0 }}
+                        </div>
+                        <div class="text-xs text-orange-600 dark:text-orange-400">Transacciones</div>
+                    </div>
+                    <div class="grid grid-cols-2 gap-2 text-xs">
+                        <div class="bg-gray-50 dark:bg-gray-800 rounded p-2">
+                            <div class="font-medium">Tipo</div>
+                            <div class="text-gray-600 dark:text-gray-400 capitalize">{{ mostActiveAccountInfo()!.type }}
+                            </div>
+                        </div>
+                        <div class="bg-gray-50 dark:bg-gray-800 rounded p-2">
+                            <div class="font-medium">Saldo</div>
+                            <div class="text-gray-600 dark:text-gray-400">{{ mostActiveAccountInfo()!.balance | currency
+                                }}</div>
+                        </div>
+                    </div>
+                </div>
+                }@else {
+                <div class="text-center text-gray-500 dark:text-gray-400 py-8">
+                    <mat-icon class="text-4xl mb-2">account_circle</mat-icon>
+                    <p>No hay transacciones hoy</p>
+                </div>
+                }
+
+
+                <ng-template #noActiveAccount>
+                    <div class="text-center text-gray-500 dark:text-gray-400 py-8">
+                        <mat-icon class="text-4xl mb-2">account_circle</mat-icon>
+                        <p>No hay transacciones hoy</p>
+                    </div>
+                </ng-template>
+            </mat-card-content>
+        </mat-card>
+    </div>
+
+    <!-- Últimas Transacciones -->
+    <mat-card>
+        <mat-card-header>
+            <mat-card-title class="flex items-center justify-between">
+                <div class="flex items-center">
+                    <mat-icon class="mr-2 text-green-500">list_alt</mat-icon>
+                    Últimas Transacciones
+                </div>
+                <div class="text-sm font-normal text-gray-500 dark:text-gray-400">
+                    {{ filteredTransactions().length }} de {{ transactions().length }} transacciones
+                </div>
+            </mat-card-title>
+            <mat-card-subtitle>Resumen de actividades recientes</mat-card-subtitle>
+        </mat-card-header>
+        <mat-card-content class="p-0">
+            <div class="overflow-x-auto">
+                <table mat-table [dataSource]="filteredTransactions()" class="w-full">
+
+                    <!-- Cuenta Origen -->
+                    <ng-container matColumnDef="fromAccount">
+                        <th mat-header-cell *matHeaderCellDef> Desde </th>
+                        <td mat-cell *matCellDef="let transaction" class="py-3">
+                            <div class="flex items-center">
+                                <img [src]="getAccountPhoto(transaction.fromAccount)" class="w-8 h-8 rounded-full mr-3">
+                                <div>
+                                    <div class="font-medium text-sm">{{ getAccountName(transaction.fromAccount) }}</div>
+                                    <div class="text-xs text-gray-500">{{ getAccountNumber(transaction.fromAccount) }}
+                                    </div>
+                                </div>
+                            </div>
+                        </td>
+                    </ng-container>
+
+                    <!-- Cuenta Destino -->
+                    <ng-container matColumnDef="toAccount">
+                        <th mat-header-cell *matHeaderCellDef> Hacia </th>
+                        <td mat-cell *matCellDef="let transaction" class="py-3">
+                            <div class="flex items-center">
+                                <img [src]="getAccountPhoto(transaction.toAccount)" class="w-8 h-8 rounded-full mr-3">
+                                <div>
+                                    <div class="font-medium text-sm">{{ getAccountName(transaction.toAccount) }}</div>
+                                    <div class="text-xs text-gray-500">{{ getAccountNumber(transaction.toAccount) }}
+                                    </div>
+                                </div>
+                            </div>
+                        </td>
+                    </ng-container>
+
+                    <!-- Monto -->
+                    <ng-container matColumnDef="amount">
+                        <th mat-header-cell *matHeaderCellDef class="text-right"> Monto </th>
+                        <td mat-cell *matCellDef="let transaction" class="text-right py-3">
+                            <div class="font-bold text-green-600 dark:text-green-400">
+                                {{ transaction.amount | currency:'USD':'symbol' }}
+                            </div>
+                            <div class="text-xs text-gray-500">{{ transaction.date | date:'shortTime' }}</div>
+                        </td>
+                    </ng-container>
+
+                    <!-- Estado -->
+                    <ng-container matColumnDef="status">
+                        <th mat-header-cell *matHeaderCellDef> Estado </th>
+                        <td mat-cell *matCellDef="let transaction" class="py-3">
+                            <span [class]="getStatusClass(transaction.status)"
+                                class="px-2 py-1 rounded-full text-xs font-medium">
+                                {{ getStatusText(transaction.status) }}
+                            </span>
+                        </td>
+                    </ng-container>
+
+                    <!-- Fecha -->
+                    <ng-container matColumnDef="date">
+                        <th mat-header-cell *matHeaderCellDef> Fecha </th>
+                        <td mat-cell *matCellDef="let transaction" class="py-3">
+                            <div class="text-sm">{{ transaction.date | date:'mediumDate' }}</div>
+                            <div class="text-xs text-gray-500">{{ transaction.date | date:'shortTime' }}</div>
+                        </td>
+                    </ng-container>
+
+                    <tr mat-header-row *matHeaderRowDef="displayedColumns"></tr>
+                    <tr mat-row *matRowDef="let row; columns: displayedColumns;"></tr>
+                </table>
+            </div>
+
+            <!-- Mensaje cuando no hay transacciones -->
+            @if(filteredTransactions().length === 0) {
+            <div class="text-center py-12 text-gray-500 dark:text-gray-400">
+                <mat-icon class="text-4xl mb-2">receipt_long</mat-icon>
+                <p class="text-lg">No hay transacciones para mostrar</p>
+                <p class="text-sm">Realiza una transferencia para ver el historial</p>
+            </div>
+            }
+        </mat-card-content>
+    </mat-card>
+
+    <!-- Información de Filtros Activos -->
+    @if(filteredTransactions().length !== transactions().length) {
+    <div class="mt-4 p-4 bg-blue-50 dark:bg-blue-900/20 rounded-lg border border-blue-200 dark:border-blue-800">
+        <div class="flex items-center justify-between">
+            <div class="flex items-center">
+                <mat-icon class="text-blue-500 mr-2">filter_alt</mat-icon>
+                <span class="text-blue-700 dark:text-blue-300">
+                    Mostrando {{ filteredTransactions().length }} de {{ transactions().length }} transacciones
+                </span>
+            </div>
+            <button mat-button color="primary" (click)="clearFilters()" class="text-sm">
+                <mat-icon>clear</mat-icon>
+                Limpiar filtros
+            </button>
+        </div>
+    </div>
+    }
+</div>
